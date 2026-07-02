@@ -28,7 +28,7 @@ const PROD: Def[] = [
   { hetznerId: "lb1", name: "lb-public", category: "load_balancer", type: "lb11", location: "fsn1", hourly: 0.0079, monthly: 5.39 },
   { hetznerId: "v1", name: "postgres-data", category: "volume", location: "fsn1", hourly: 0.0301, monthly: 22.0 },
   { hetznerId: "v2", name: "backups-vol", category: "volume", location: "fsn1", hourly: 0.0137, monthly: 10.0 },
-  { hetznerId: "bk4", name: "postgres-primary backups", category: "backup", type: "ccx23", location: "fsn1", hourly: 0.028, monthly: 17.5 },
+  { hetznerId: "backup-s4", name: "postgres-primary backups", category: "backup", type: "ccx23", location: "fsn1", hourly: 0.028, monthly: 17.5 },
   { hetznerId: "pip1", name: "203.0.113.10", category: "primary_ip", type: "ipv4", location: "fsn1", hourly: 0.0007, monthly: 0.5 },
   { hetznerId: "fip1", name: "203.0.113.42", category: "floating_ip", type: "ipv4", location: "fsn1", hourly: 0.0041, monthly: 3.0 },
   { hetznerId: "snap1", name: "nightly-2026-07-01", category: "snapshot", hourly: 0.0007, monthly: 0.52 },

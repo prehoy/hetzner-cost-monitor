@@ -79,16 +79,22 @@ export const billingHours = sqliteTable(
   ],
 );
 
-// Manual per-server-type price overrides. Hetzner's /v1/pricing only exposes
-// CURRENT list prices, so grandfathered servers (e.g. pre-June-2026 CCX rates)
-// are overcharged. An override pins the real NET price for a server type.
-export const priceOverrides = sqliteTable("price_overrides", {
-  id: integer("id").primaryKey({ autoIncrement: true }),
-  serverType: text("server_type").notNull().unique(),
-  hourlyCost: real("hourly_cost").notNull(),
-  monthlyCost: real("monthly_cost").notNull(),
-  createdAt: integer("created_at", { mode: "timestamp_ms" }).notNull().$defaultFn(now),
-});
+// Manual PER-RESOURCE price overrides. Hetzner's /v1/pricing only exposes
+// CURRENT list prices, but grandfathering is per-instance (a server keeps the
+// price it was created at), so overrides are keyed to a specific resource, not
+// a type. Pins the real NET price for one server.
+export const priceOverrides = sqliteTable(
+  "price_overrides",
+  {
+    id: integer("id").primaryKey({ autoIncrement: true }),
+    projectId: integer("project_id").notNull(),
+    hetznerId: text("hetzner_id").notNull(),
+    hourlyCost: real("hourly_cost").notNull(),
+    monthlyCost: real("monthly_cost").notNull(),
+    createdAt: integer("created_at", { mode: "timestamp_ms" }).notNull().$defaultFn(now),
+  },
+  (t) => [uniqueIndex("price_overrides_resource").on(t.projectId, t.hetznerId)],
+);
 
 export const pricingSnapshots = sqliteTable("pricing_snapshots", {
   id: integer("id").primaryKey({ autoIncrement: true }),

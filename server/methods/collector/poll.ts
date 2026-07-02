@@ -48,13 +48,15 @@ async function collectProject(project: typeof projects.$inferSelect): Promise<vo
     hetznerList(token, "/images?type=snapshot", "images"),
   ]);
 
-  const ovRows = await db.select().from(priceOverrides);
+  const ovRows = await db.query.priceOverrides.findMany({
+    where: eq(priceOverrides.projectId, project.id),
+  });
   const overrides = new Map(
-    ovRows.map((o) => [o.serverType, { hourlyCost: o.hourlyCost, monthlyCost: o.monthlyCost }]),
+    ovRows.map((o) => [o.hetznerId, { hourlyCost: o.hourlyCost, monthlyCost: o.monthlyCost }]),
   );
 
   const priced: Priced[] = [
-    ...servers.flatMap((s) => priceServer(pricing, s, overrides)),
+    ...servers.flatMap((s) => priceServer(pricing, s, overrides.get(String(s.id)))),
     ...volumes.map((v) => priceVolume(pricing, v)),
     ...lbs.map((l) => priceLoadBalancer(pricing, l)),
     ...primaryIps.map((p) => pricePrimaryIp(pricing, p)),

@@ -143,7 +143,8 @@ export type AuthMeResponse = AuthMeResponses[keyof AuthMeResponses];
 
 export type PricingOverrideSetData = {
   body?: {
-    serverType: string;
+    projectId: number;
+    hetznerId: string;
     monthlyCost: number;
     hourlyCost?: number;
   };
@@ -188,11 +189,11 @@ export type PricingOverridesData = {
 
 export type PricingOverridesResponses = {
   /**
-   * Server types in use with list price and any override
+   * Live servers with list price and any per-resource override
    */
   200: {
     currency?: string;
-    types?: Array<{
+    servers?: Array<{
       [key: string]: unknown;
     }>;
   };
@@ -203,7 +204,8 @@ export type PricingOverridesResponse =
 
 export type PricingOverrideDeleteData = {
   body?: {
-    serverType: string;
+    projectId: number;
+    hetznerId: string;
   };
   path?: never;
   query?: never;

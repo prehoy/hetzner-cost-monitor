@@ -76,8 +76,7 @@ test("server location read from flat server.location (real list-endpoint shape)"
   expect(srv.monthlyCost).toBeCloseTo(3.79, 6);
 });
 
-test("override pins a grandfathered price over the rate card (+ backup derives from it)", () => {
-  const overrides = new Map([["cx22", { hourlyCost: 0.003, monthlyCost: 1.9 }]]);
+test("per-resource override pins a grandfathered price (+ backup derives from it)", () => {
   const rows = priceServer(
     pricing,
     {
@@ -89,7 +88,7 @@ test("override pins a grandfathered price over the rate card (+ backup derives f
       outgoing_traffic: 0,
       included_traffic: 21990232555520,
     },
-    overrides,
+    { hourlyCost: 0.003, monthlyCost: 1.9 },
   );
   const srv = rows.find((r) => r.category === "server");
   const backup = rows.find((r) => r.category === "backup");

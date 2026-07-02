@@ -15,6 +15,13 @@
       "when": 1783009328581,
       "tag": "0001_sticky_korg",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "6",
+      "when": 1783100000000,
+      "tag": "0002_resource_price_overrides",
+      "breakpoints": true
     }
   ]
 }

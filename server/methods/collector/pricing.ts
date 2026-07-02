@@ -50,11 +50,7 @@ function pickPrice(prices: LocationPrice[] | undefined, location?: string) {
 
 export type Override = { hourlyCost: number; monthlyCost: number };
 
-export function priceServer(
-  pricing: Pricing,
-  server: any,
-  overrides?: Map<string, Override>,
-): Priced[] {
+export function priceServer(pricing: Pricing, server: any, override?: Override): Priced[] {
   // The list endpoint exposes location at `server.location`; some responses
   // nest it under `server.datacenter.location`. Support both — and it must be
   // right, since server_type prices vary by location (US costs more than DE).
@@ -62,10 +58,10 @@ export function priceServer(
   const type = server.server_type?.name;
   const st = pricing.server_types?.find((s) => s.name === type);
   const lp = pickPrice(st?.prices, location);
-  // A manual override (grandfathered/legacy price) wins over the list rate card.
-  const ov = type ? overrides?.get(type) : undefined;
-  const hourly = ov ? ov.hourlyCost : net(lp?.price_hourly);
-  const monthly = ov ? ov.monthlyCost : net(lp?.price_monthly); // Hetzner caps monthly at this rate
+  // A manual override (this server's grandfathered/legacy price) wins over the
+  // list rate card; the backup surcharge below derives from it too.
+  const hourly = override ? override.hourlyCost : net(lp?.price_hourly);
+  const monthly = override ? override.monthlyCost : net(lp?.price_monthly);
   const rows: Priced[] = [
     {
       hetznerId: String(server.id),
