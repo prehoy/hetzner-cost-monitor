@@ -13,6 +13,11 @@ import {
   authMe,
   authRegister,
   authStatus,
+  backupConfig,
+  backupList,
+  backupRestore,
+  backupRun,
+  backupSave,
   costsBreakdown,
   costsSummary,
   costsTimeseries,
@@ -39,6 +44,20 @@ import type {
   AuthRegisterResponse,
   AuthStatusData,
   AuthStatusResponse,
+  BackupConfigData,
+  BackupConfigResponse,
+  BackupListData,
+  BackupListError,
+  BackupListResponse,
+  BackupRestoreData,
+  BackupRestoreError,
+  BackupRestoreResponse,
+  BackupRunData,
+  BackupRunError,
+  BackupRunResponse,
+  BackupSaveData,
+  BackupSaveError,
+  BackupSaveResponse,
   CostsBreakdownData,
   CostsBreakdownResponse,
   CostsSummaryData,
@@ -65,20 +84,20 @@ import type {
   ProjectsToggleResponse,
 } from "../types.gen";
 
-export const authLogoutMutation = (
-  options?: Partial<Options<AuthLogoutData>>,
+export const backupRunMutation = (
+  options?: Partial<Options<BackupRunData>>,
 ): UseMutationOptions<
-  AuthLogoutResponse,
-  DefaultError,
-  Options<AuthLogoutData>
+  BackupRunResponse,
+  BackupRunError,
+  Options<BackupRunData>
 > => {
   const mutationOptions: UseMutationOptions<
-    AuthLogoutResponse,
-    DefaultError,
-    Options<AuthLogoutData>
+    BackupRunResponse,
+    BackupRunError,
+    Options<BackupRunData>
   > = {
     mutationFn: async (fnOptions) => {
-      const { data } = await authLogout({
+      const { data } = await backupRun({
         ...options,
         ...fnOptions,
         throwOnError: true,
@@ -89,20 +108,20 @@ export const authLogoutMutation = (
   return mutationOptions;
 };
 
-export const authLoginMutation = (
-  options?: Partial<Options<AuthLoginData>>,
+export const backupSaveMutation = (
+  options?: Partial<Options<BackupSaveData>>,
 ): UseMutationOptions<
-  AuthLoginResponse,
-  AuthLoginError,
-  Options<AuthLoginData>
+  BackupSaveResponse,
+  BackupSaveError,
+  Options<BackupSaveData>
 > => {
   const mutationOptions: UseMutationOptions<
-    AuthLoginResponse,
-    AuthLoginError,
-    Options<AuthLoginData>
+    BackupSaveResponse,
+    BackupSaveError,
+    Options<BackupSaveData>
   > = {
     mutationFn: async (fnOptions) => {
-      const { data } = await authLogin({
+      const { data } = await backupSave({
         ...options,
         ...fnOptions,
         throwOnError: true,
@@ -151,6 +170,122 @@ const createQueryKey = <TOptions extends Options>(
     params.query = options.query;
   }
   return [params];
+};
+
+export const backupListQueryKey = (options?: Options<BackupListData>) =>
+  createQueryKey("backupList", options);
+
+export const backupListOptions = (options?: Options<BackupListData>) =>
+  queryOptions<
+    BackupListResponse,
+    BackupListError,
+    BackupListResponse,
+    ReturnType<typeof backupListQueryKey>
+  >({
+    queryFn: async ({ queryKey, signal }) => {
+      const { data } = await backupList({
+        ...options,
+        ...queryKey[0],
+        signal,
+        throwOnError: true,
+      });
+      return data;
+    },
+    queryKey: backupListQueryKey(options),
+  });
+
+export const backupConfigQueryKey = (options?: Options<BackupConfigData>) =>
+  createQueryKey("backupConfig", options);
+
+export const backupConfigOptions = (options?: Options<BackupConfigData>) =>
+  queryOptions<
+    BackupConfigResponse,
+    DefaultError,
+    BackupConfigResponse,
+    ReturnType<typeof backupConfigQueryKey>
+  >({
+    queryFn: async ({ queryKey, signal }) => {
+      const { data } = await backupConfig({
+        ...options,
+        ...queryKey[0],
+        signal,
+        throwOnError: true,
+      });
+      return data;
+    },
+    queryKey: backupConfigQueryKey(options),
+  });
+
+export const backupRestoreMutation = (
+  options?: Partial<Options<BackupRestoreData>>,
+): UseMutationOptions<
+  BackupRestoreResponse,
+  BackupRestoreError,
+  Options<BackupRestoreData>
+> => {
+  const mutationOptions: UseMutationOptions<
+    BackupRestoreResponse,
+    BackupRestoreError,
+    Options<BackupRestoreData>
+  > = {
+    mutationFn: async (fnOptions) => {
+      const { data } = await backupRestore({
+        ...options,
+        ...fnOptions,
+        throwOnError: true,
+      });
+      return data;
+    },
+  };
+  return mutationOptions;
+};
+
+export const authLogoutMutation = (
+  options?: Partial<Options<AuthLogoutData>>,
+): UseMutationOptions<
+  AuthLogoutResponse,
+  DefaultError,
+  Options<AuthLogoutData>
+> => {
+  const mutationOptions: UseMutationOptions<
+    AuthLogoutResponse,
+    DefaultError,
+    Options<AuthLogoutData>
+  > = {
+    mutationFn: async (fnOptions) => {
+      const { data } = await authLogout({
+        ...options,
+        ...fnOptions,
+        throwOnError: true,
+      });
+      return data;
+    },
+  };
+  return mutationOptions;
+};
+
+export const authLoginMutation = (
+  options?: Partial<Options<AuthLoginData>>,
+): UseMutationOptions<
+  AuthLoginResponse,
+  AuthLoginError,
+  Options<AuthLoginData>
+> => {
+  const mutationOptions: UseMutationOptions<
+    AuthLoginResponse,
+    AuthLoginError,
+    Options<AuthLoginData>
+  > = {
+    mutationFn: async (fnOptions) => {
+      const { data } = await authLogin({
+        ...options,
+        ...fnOptions,
+        throwOnError: true,
+      });
+      return data;
+    },
+  };
+  return mutationOptions;
 };
 
 export const authStatusQueryKey = (options?: Options<AuthStatusData>) =>

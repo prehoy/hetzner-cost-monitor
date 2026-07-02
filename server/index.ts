@@ -5,6 +5,7 @@ import { existsSync } from "fs";
 import { serveStatic } from "hono/bun";
 import { cors } from "hono/cors";
 import { startCollector } from "./methods/collector/start";
+import { scheduleBackups } from "./methods/backup/scheduler";
 import loadRoutes from "./methods/loadRoutes";
 import validateENV, { tEnv } from "./env";
 
@@ -49,6 +50,7 @@ if (existsSync("./public")) {
 }
 
 if (!tEnv.DISABLE_COLLECTOR) startCollector();
+scheduleBackups().catch(() => {});
 
 Bun.serve({
   port: Number(tEnv.PORT) || 3000,

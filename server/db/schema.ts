@@ -96,6 +96,26 @@ export const priceOverrides = sqliteTable(
   (t) => [uniqueIndex("price_overrides_resource").on(t.projectId, t.hetznerId)],
 );
 
+// S3 backup config (single row). Secret access key encrypted at rest with
+// APP_SECRET, like Hetzner tokens. Works with any S3-compatible provider.
+export const backupConfig = sqliteTable("backup_config", {
+  id: integer("id").primaryKey({ autoIncrement: true }),
+  endpoint: text("endpoint"), // empty for AWS; set for MinIO/Hetzner/R2/B2
+  region: text("region"),
+  bucket: text("bucket").notNull(),
+  prefix: text("prefix").notNull().default("hacm"),
+  accessKeyId: text("access_key_id").notNull(),
+  secretEncrypted: text("secret_encrypted").notNull(),
+  secretIv: text("secret_iv").notNull(),
+  intervalHours: integer("interval_hours").notNull().default(24),
+  retention: integer("retention").notNull().default(14), // keep newest N backups
+  enabled: integer("enabled", { mode: "boolean" }).notNull().default(true),
+  lastBackupAt: integer("last_backup_at", { mode: "timestamp_ms" }),
+  lastBackupError: text("last_backup_error"),
+  lastBackupKey: text("last_backup_key"),
+  updatedAt: integer("updated_at", { mode: "timestamp_ms" }).notNull().$defaultFn(now),
+});
+
 export const pricingSnapshots = sqliteTable("pricing_snapshots", {
   id: integer("id").primaryKey({ autoIncrement: true }),
   fetchedAt: integer("fetched_at", { mode: "timestamp_ms" }).notNull().$defaultFn(now),
@@ -111,5 +131,6 @@ export const schema = {
   resources,
   billingHours,
   priceOverrides,
+  backupConfig,
   pricingSnapshots,
 };

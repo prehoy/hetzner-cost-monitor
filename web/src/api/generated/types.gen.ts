@@ -4,6 +4,174 @@ export type ClientOptions = {
   baseUrl: "http://localhost:3090" | (string & {});
 };
 
+export type BackupRunData = {
+  body?: never;
+  path?: never;
+  query?: never;
+  url: "/api/backup/run";
+};
+
+export type BackupRunErrors = {
+  /**
+   * Error
+   */
+  500: {
+    error: string;
+    message?: {
+      error_message: string;
+    };
+  };
+};
+
+export type BackupRunError = BackupRunErrors[keyof BackupRunErrors];
+
+export type BackupRunResponses = {
+  /**
+   * Backup created
+   */
+  200: {
+    status?: string;
+    key?: string;
+    size?: number;
+  };
+};
+
+export type BackupRunResponse = BackupRunResponses[keyof BackupRunResponses];
+
+export type BackupSaveData = {
+  body?: {
+    endpoint?: string;
+    region?: string;
+    bucket: string;
+    prefix?: string;
+    accessKeyId: string;
+    secretAccessKey?: string;
+    intervalHours?: number;
+    retention?: number;
+    enabled?: boolean;
+  };
+  path?: never;
+  query?: never;
+  url: "/api/backup/save";
+};
+
+export type BackupSaveErrors = {
+  /**
+   * Error
+   */
+  500: {
+    error: string;
+    message?: {
+      error_message: string;
+    };
+  };
+};
+
+export type BackupSaveError = BackupSaveErrors[keyof BackupSaveErrors];
+
+export type BackupSaveResponses = {
+  /**
+   * Saved
+   */
+  200: {
+    status?: string;
+  };
+};
+
+export type BackupSaveResponse = BackupSaveResponses[keyof BackupSaveResponses];
+
+export type BackupListData = {
+  body?: never;
+  path?: never;
+  query?: never;
+  url: "/api/backup/list";
+};
+
+export type BackupListErrors = {
+  /**
+   * Error
+   */
+  500: {
+    error: string;
+    message?: {
+      error_message: string;
+    };
+  };
+};
+
+export type BackupListError = BackupListErrors[keyof BackupListErrors];
+
+export type BackupListResponses = {
+  /**
+   * Backups in the bucket
+   */
+  200: {
+    backups?: Array<{
+      [key: string]: unknown;
+    }>;
+  };
+};
+
+export type BackupListResponse = BackupListResponses[keyof BackupListResponses];
+
+export type BackupConfigData = {
+  body?: never;
+  path?: never;
+  query?: never;
+  url: "/api/backup/config";
+};
+
+export type BackupConfigResponses = {
+  /**
+   * Backup config + status
+   */
+  200: {
+    configured?: boolean;
+    config?: {
+      [key: string]: unknown;
+    };
+  };
+};
+
+export type BackupConfigResponse =
+  BackupConfigResponses[keyof BackupConfigResponses];
+
+export type BackupRestoreData = {
+  body?: {
+    key: string;
+  };
+  path?: never;
+  query?: never;
+  url: "/api/backup/restore";
+};
+
+export type BackupRestoreErrors = {
+  /**
+   * Error
+   */
+  500: {
+    error: string;
+    message?: {
+      error_message: string;
+    };
+  };
+};
+
+export type BackupRestoreError = BackupRestoreErrors[keyof BackupRestoreErrors];
+
+export type BackupRestoreResponses = {
+  /**
+   * Restore staged
+   */
+  200: {
+    status?: string;
+    note?: string;
+  };
+};
+
+export type BackupRestoreResponse =
+  BackupRestoreResponses[keyof BackupRestoreResponses];
+
 export type AuthLogoutData = {
   body?: never;
   path?: never;

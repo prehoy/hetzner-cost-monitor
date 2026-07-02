@@ -127,4 +127,4 @@ async function insertResource(projectId: number, r: Def) {
   });
 }
 
-seed();
+await seed();

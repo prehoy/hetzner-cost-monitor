@@ -21,6 +21,20 @@ import type {
   AuthRegisterResponses,
   AuthStatusData,
   AuthStatusResponses,
+  BackupConfigData,
+  BackupConfigResponses,
+  BackupListData,
+  BackupListErrors,
+  BackupListResponses,
+  BackupRestoreData,
+  BackupRestoreErrors,
+  BackupRestoreResponses,
+  BackupRunData,
+  BackupRunErrors,
+  BackupRunResponses,
+  BackupSaveData,
+  BackupSaveErrors,
+  BackupSaveResponses,
   CostsBreakdownData,
   CostsBreakdownResponses,
   CostsSummaryData,
@@ -64,6 +78,63 @@ export type Options<
    */
   meta?: keyof ClientMeta extends never ? Record<string, unknown> : ClientMeta;
 };
+
+export const backupRun = <ThrowOnError extends boolean = false>(
+  options?: Options<BackupRunData, ThrowOnError>,
+): RequestResult<BackupRunResponses, BackupRunErrors, ThrowOnError> =>
+  (options?.client ?? client).post<
+    BackupRunResponses,
+    BackupRunErrors,
+    ThrowOnError
+  >({ url: "/api/backup/run", ...options });
+
+export const backupSave = <ThrowOnError extends boolean = false>(
+  options?: Options<BackupSaveData, ThrowOnError>,
+): RequestResult<BackupSaveResponses, BackupSaveErrors, ThrowOnError> =>
+  (options?.client ?? client).post<
+    BackupSaveResponses,
+    BackupSaveErrors,
+    ThrowOnError
+  >({
+    url: "/api/backup/save",
+    ...options,
+    headers: {
+      "Content-Type": "application/json",
+      ...options?.headers,
+    },
+  });
+
+export const backupList = <ThrowOnError extends boolean = false>(
+  options?: Options<BackupListData, ThrowOnError>,
+): RequestResult<BackupListResponses, BackupListErrors, ThrowOnError> =>
+  (options?.client ?? client).get<
+    BackupListResponses,
+    BackupListErrors,
+    ThrowOnError
+  >({ url: "/api/backup/list", ...options });
+
+export const backupConfig = <ThrowOnError extends boolean = false>(
+  options?: Options<BackupConfigData, ThrowOnError>,
+): RequestResult<BackupConfigResponses, unknown, ThrowOnError> =>
+  (options?.client ?? client).get<BackupConfigResponses, unknown, ThrowOnError>(
+    { url: "/api/backup/config", ...options },
+  );
+
+export const backupRestore = <ThrowOnError extends boolean = false>(
+  options?: Options<BackupRestoreData, ThrowOnError>,
+): RequestResult<BackupRestoreResponses, BackupRestoreErrors, ThrowOnError> =>
+  (options?.client ?? client).post<
+    BackupRestoreResponses,
+    BackupRestoreErrors,
+    ThrowOnError
+  >({
+    url: "/api/backup/restore",
+    ...options,
+    headers: {
+      "Content-Type": "application/json",
+      ...options?.headers,
+    },
+  });
 
 export const authLogout = <ThrowOnError extends boolean = false>(
   options?: Options<AuthLogoutData, ThrowOnError>,

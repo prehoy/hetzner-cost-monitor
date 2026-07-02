@@ -14,6 +14,9 @@ resource type, and location.
 - **Cost explorer** — accrued-spend-per-hour chart, grouped by category /
   location / project, plus a sortable per-resource breakdown. Net or gross (VAT).
 - **Multi-project** — add any number of Hetzner API tokens; filter and aggregate.
+- **Backups** — snapshot the database to your own S3 bucket on a schedule (works with any
+  S3-compatible provider: MinIO, Hetzner Object Storage, Cloudflare R2, Backblaze B2, AWS),
+  with retention and one-click restore. Credentials are encrypted at rest.
 - **Price overrides** — `/v1/pricing` only exposes *current* list prices, so servers on
   grandfathered/legacy rates (e.g. pre-June-2026 CCX) get overcharged. Pin the real per-type
   price on the Pricing page and the collector uses it instead of the rate card.
