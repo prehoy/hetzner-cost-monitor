@@ -86,10 +86,27 @@ async function seed() {
   // chunked insert (SQLite variable limit)
   for (let i = 0; i < rows.length; i += 200) await db.insert(billingHours).values(rows.slice(i, i + 200));
 
+  // Minimal but realistic rate card so the Pricing page shows list prices.
+  // ccx23 list is the post-hike price so the demo can show an override to a
+  // grandfathered rate.
+  const net = (v: number) => ({ net: v.toFixed(4), gross: (v * 1.19).toFixed(4) });
+  const p = (name: string, loc: string, hr: number, mo: number) => ({
+    name,
+    prices: [{ location: loc, price_hourly: net(hr), price_monthly: net(mo) }],
+  });
   await db.insert(pricingSnapshots).values({
     currency: "EUR",
     vatRate: "19.000000",
-    dataJson: JSON.stringify({ currency: "EUR", vat_rate: "19.000000" }),
+    dataJson: JSON.stringify({
+      currency: "EUR",
+      vat_rate: "19.000000",
+      server_types: [
+        p("cpx11", "nbg1", 0.0088, 5.49),
+        p("cpx21", "hel1", 0.013, 8.49),
+        p("cpx31", "nbg1", 0.025, 15.49),
+        p("ccx23", "fsn1", 0.1402, 87.49),
+      ],
+    }),
   });
 
   console.log(`seeded: ${liveProd.length + STAGING.length} live resources, ${rows.length} billing hours`);

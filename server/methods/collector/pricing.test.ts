@@ -76,6 +76,27 @@ test("server location read from flat server.location (real list-endpoint shape)"
   expect(srv.monthlyCost).toBeCloseTo(3.79, 6);
 });
 
+test("override pins a grandfathered price over the rate card (+ backup derives from it)", () => {
+  const overrides = new Map([["cx22", { hourlyCost: 0.003, monthlyCost: 1.9 }]]);
+  const rows = priceServer(
+    pricing,
+    {
+      id: 3,
+      name: "legacy",
+      server_type: { name: "cx22" },
+      location: { name: "fsn1" },
+      backup_window: "22-02",
+      outgoing_traffic: 0,
+      included_traffic: 21990232555520,
+    },
+    overrides,
+  );
+  const srv = rows.find((r) => r.category === "server");
+  const backup = rows.find((r) => r.category === "backup");
+  expect(srv?.monthlyCost).toBeCloseTo(1.9, 6); // override, not the 3.79 list price
+  expect(backup?.monthlyCost).toBeCloseTo(0.38, 6); // 20% of the overridden 1.9
+});
+
 test("volume priced per GB-month with hourly derived", () => {
   const v = priceVolume(pricing, { id: 9, name: "data", size: 100, location: { name: "fsn1" } });
   expect(v.monthlyCost).toBeCloseTo(4.4, 6);

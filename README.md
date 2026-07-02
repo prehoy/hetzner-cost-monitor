@@ -14,6 +14,9 @@ resource type, and location.
 - **Cost explorer** — accrued-spend-per-hour chart, grouped by category /
   location / project, plus a sortable per-resource breakdown. Net or gross (VAT).
 - **Multi-project** — add any number of Hetzner API tokens; filter and aggregate.
+- **Price overrides** — `/v1/pricing` only exposes *current* list prices, so servers on
+  grandfathered/legacy rates (e.g. pre-June-2026 CCX) get overcharged. Pin the real per-type
+  price on the Pricing page and the collector uses it instead of the rate card.
 
 Covers Hetzner **Cloud**: servers (incl. backups & traffic overage), volumes,
 load balancers, primary & floating IPs, and snapshots. Costs are computed

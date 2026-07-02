@@ -29,6 +29,13 @@ import type {
   CostsTimeseriesResponses,
   PricingCurrentData,
   PricingCurrentResponses,
+  PricingOverrideDeleteData,
+  PricingOverrideDeleteResponses,
+  PricingOverridesData,
+  PricingOverrideSetData,
+  PricingOverrideSetErrors,
+  PricingOverrideSetResponses,
+  PricingOverridesResponses,
   ProjectsCreateData,
   ProjectsCreateErrors,
   ProjectsCreateResponses,
@@ -112,6 +119,51 @@ export const authMe = <ThrowOnError extends boolean = false>(
   (options?.client ?? client).get<AuthMeResponses, unknown, ThrowOnError>({
     url: "/api/auth/me",
     ...options,
+  });
+
+export const pricingOverrideSet = <ThrowOnError extends boolean = false>(
+  options?: Options<PricingOverrideSetData, ThrowOnError>,
+): RequestResult<
+  PricingOverrideSetResponses,
+  PricingOverrideSetErrors,
+  ThrowOnError
+> =>
+  (options?.client ?? client).post<
+    PricingOverrideSetResponses,
+    PricingOverrideSetErrors,
+    ThrowOnError
+  >({
+    url: "/api/pricing/override_set",
+    ...options,
+    headers: {
+      "Content-Type": "application/json",
+      ...options?.headers,
+    },
+  });
+
+export const pricingOverrides = <ThrowOnError extends boolean = false>(
+  options?: Options<PricingOverridesData, ThrowOnError>,
+): RequestResult<PricingOverridesResponses, unknown, ThrowOnError> =>
+  (options?.client ?? client).get<
+    PricingOverridesResponses,
+    unknown,
+    ThrowOnError
+  >({ url: "/api/pricing/overrides", ...options });
+
+export const pricingOverrideDelete = <ThrowOnError extends boolean = false>(
+  options?: Options<PricingOverrideDeleteData, ThrowOnError>,
+): RequestResult<PricingOverrideDeleteResponses, unknown, ThrowOnError> =>
+  (options?.client ?? client).post<
+    PricingOverrideDeleteResponses,
+    unknown,
+    ThrowOnError
+  >({
+    url: "/api/pricing/override_delete",
+    ...options,
+    headers: {
+      "Content-Type": "application/json",
+      ...options?.headers,
+    },
   });
 
 export const pricingCurrent = <ThrowOnError extends boolean = false>(

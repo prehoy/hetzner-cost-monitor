@@ -1,6 +1,6 @@
 import { and, eq, isNull, lt } from "drizzle-orm";
 import db from "../../db/client";
-import { billingHours, pricingSnapshots, projects, resources } from "../../db/schema";
+import { billingHours, priceOverrides, pricingSnapshots, projects, resources } from "../../db/schema";
 import { tEnv } from "../../env";
 import { decrypt } from "../crypto";
 import { hetznerGet, hetznerList } from "../hetzner/client";
@@ -48,8 +48,13 @@ async function collectProject(project: typeof projects.$inferSelect): Promise<vo
     hetznerList(token, "/images?type=snapshot", "images"),
   ]);
 
+  const ovRows = await db.select().from(priceOverrides);
+  const overrides = new Map(
+    ovRows.map((o) => [o.serverType, { hourlyCost: o.hourlyCost, monthlyCost: o.monthlyCost }]),
+  );
+
   const priced: Priced[] = [
-    ...servers.flatMap((s) => priceServer(pricing, s)),
+    ...servers.flatMap((s) => priceServer(pricing, s, overrides)),
     ...volumes.map((v) => priceVolume(pricing, v)),
     ...lbs.map((l) => priceLoadBalancer(pricing, l)),
     ...primaryIps.map((p) => pricePrimaryIp(pricing, p)),

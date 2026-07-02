@@ -48,7 +48,13 @@ function pickPrice(prices: LocationPrice[] | undefined, location?: string) {
   );
 }
 
-export function priceServer(pricing: Pricing, server: any): Priced[] {
+export type Override = { hourlyCost: number; monthlyCost: number };
+
+export function priceServer(
+  pricing: Pricing,
+  server: any,
+  overrides?: Map<string, Override>,
+): Priced[] {
   // The list endpoint exposes location at `server.location`; some responses
   // nest it under `server.datacenter.location`. Support both — and it must be
   // right, since server_type prices vary by location (US costs more than DE).
@@ -56,8 +62,10 @@ export function priceServer(pricing: Pricing, server: any): Priced[] {
   const type = server.server_type?.name;
   const st = pricing.server_types?.find((s) => s.name === type);
   const lp = pickPrice(st?.prices, location);
-  const hourly = net(lp?.price_hourly);
-  const monthly = net(lp?.price_monthly); // Hetzner caps monthly at this rate
+  // A manual override (grandfathered/legacy price) wins over the list rate card.
+  const ov = type ? overrides?.get(type) : undefined;
+  const hourly = ov ? ov.hourlyCost : net(lp?.price_hourly);
+  const monthly = ov ? ov.monthlyCost : net(lp?.price_monthly); // Hetzner caps monthly at this rate
   const rows: Priced[] = [
     {
       hetznerId: String(server.id),

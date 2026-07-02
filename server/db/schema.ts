@@ -79,6 +79,17 @@ export const billingHours = sqliteTable(
   ],
 );
 
+// Manual per-server-type price overrides. Hetzner's /v1/pricing only exposes
+// CURRENT list prices, so grandfathered servers (e.g. pre-June-2026 CCX rates)
+// are overcharged. An override pins the real NET price for a server type.
+export const priceOverrides = sqliteTable("price_overrides", {
+  id: integer("id").primaryKey({ autoIncrement: true }),
+  serverType: text("server_type").notNull().unique(),
+  hourlyCost: real("hourly_cost").notNull(),
+  monthlyCost: real("monthly_cost").notNull(),
+  createdAt: integer("created_at", { mode: "timestamp_ms" }).notNull().$defaultFn(now),
+});
+
 export const pricingSnapshots = sqliteTable("pricing_snapshots", {
   id: integer("id").primaryKey({ autoIncrement: true }),
   fetchedAt: integer("fetched_at", { mode: "timestamp_ms" }).notNull().$defaultFn(now),
@@ -93,5 +104,6 @@ export const schema = {
   projects,
   resources,
   billingHours,
+  priceOverrides,
   pricingSnapshots,
 };

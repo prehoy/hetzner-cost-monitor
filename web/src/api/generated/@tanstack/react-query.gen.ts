@@ -18,6 +18,9 @@ import {
   costsTimeseries,
   type Options,
   pricingCurrent,
+  pricingOverrideDelete,
+  pricingOverrides,
+  pricingOverrideSet,
   projectsCreate,
   projectsDelete,
   projectsList,
@@ -44,6 +47,13 @@ import type {
   CostsTimeseriesResponse,
   PricingCurrentData,
   PricingCurrentResponse,
+  PricingOverrideDeleteData,
+  PricingOverrideDeleteResponse,
+  PricingOverridesData,
+  PricingOverrideSetData,
+  PricingOverrideSetError,
+  PricingOverrideSetResponse,
+  PricingOverridesResponse,
   ProjectsCreateData,
   ProjectsCreateError,
   ProjectsCreateResponse,
@@ -210,6 +220,79 @@ export const authMeOptions = (options?: Options<AuthMeData>) =>
     },
     queryKey: authMeQueryKey(options),
   });
+
+export const pricingOverrideSetMutation = (
+  options?: Partial<Options<PricingOverrideSetData>>,
+): UseMutationOptions<
+  PricingOverrideSetResponse,
+  PricingOverrideSetError,
+  Options<PricingOverrideSetData>
+> => {
+  const mutationOptions: UseMutationOptions<
+    PricingOverrideSetResponse,
+    PricingOverrideSetError,
+    Options<PricingOverrideSetData>
+  > = {
+    mutationFn: async (fnOptions) => {
+      const { data } = await pricingOverrideSet({
+        ...options,
+        ...fnOptions,
+        throwOnError: true,
+      });
+      return data;
+    },
+  };
+  return mutationOptions;
+};
+
+export const pricingOverridesQueryKey = (
+  options?: Options<PricingOverridesData>,
+) => createQueryKey("pricingOverrides", options);
+
+export const pricingOverridesOptions = (
+  options?: Options<PricingOverridesData>,
+) =>
+  queryOptions<
+    PricingOverridesResponse,
+    DefaultError,
+    PricingOverridesResponse,
+    ReturnType<typeof pricingOverridesQueryKey>
+  >({
+    queryFn: async ({ queryKey, signal }) => {
+      const { data } = await pricingOverrides({
+        ...options,
+        ...queryKey[0],
+        signal,
+        throwOnError: true,
+      });
+      return data;
+    },
+    queryKey: pricingOverridesQueryKey(options),
+  });
+
+export const pricingOverrideDeleteMutation = (
+  options?: Partial<Options<PricingOverrideDeleteData>>,
+): UseMutationOptions<
+  PricingOverrideDeleteResponse,
+  DefaultError,
+  Options<PricingOverrideDeleteData>
+> => {
+  const mutationOptions: UseMutationOptions<
+    PricingOverrideDeleteResponse,
+    DefaultError,
+    Options<PricingOverrideDeleteData>
+  > = {
+    mutationFn: async (fnOptions) => {
+      const { data } = await pricingOverrideDelete({
+        ...options,
+        ...fnOptions,
+        throwOnError: true,
+      });
+      return data;
+    },
+  };
+  return mutationOptions;
+};
 
 export const pricingCurrentQueryKey = (options?: Options<PricingCurrentData>) =>
   createQueryKey("pricingCurrent", options);

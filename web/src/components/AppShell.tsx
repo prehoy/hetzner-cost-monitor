@@ -45,6 +45,7 @@ export function AppShell({ children }: { children: (theme: "light" | "dark") => 
           <Pulse />
           <nav className="ml-4 flex items-center gap-1">
             <NavLink to="/" label="Explorer" />
+            <NavLink to="/pricing" label="Pricing" />
             <NavLink to="/projects" label="Projects" />
           </nav>
           <div className="ml-auto flex items-center gap-2">
