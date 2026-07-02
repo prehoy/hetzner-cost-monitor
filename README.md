@@ -19,6 +19,19 @@ Covers Hetzner **Cloud**: servers (incl. backups & traffic overage), volumes,
 load balancers, primary & floating IPs, and snapshots. Costs are computed
 estimates (`live inventory × /v1/pricing`), not scraped invoices.
 
+## Screenshots
+
+![Cost explorer — dark](docs/explorer-dark.png)
+
+<p align="center">
+  <img src="docs/explorer-light.png" width="49%" alt="Cost explorer — light" />
+  <img src="docs/projects.png" width="49%" alt="Projects" />
+</p>
+
+<sub>Screenshots use seeded demo data — try it yourself with
+`DB_PATH=./demo.db APP_SECRET=demo DISABLE_COLLECTOR=true bun scripts/seed-demo.ts`
+(login `admin@demo.hacm` / `demodemo`).</sub>
+
 ## Stack
 
 Bun · Hono (folder-based routing, OpenAPI) · SQLite + Drizzle · TanStack React

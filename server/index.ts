@@ -48,7 +48,7 @@ if (existsSync("./public")) {
   app.get("*", serveStatic({ path: "./public/index.html" }));
 }
 
-startCollector();
+if (!tEnv.DISABLE_COLLECTOR) startCollector();
 
 Bun.serve({
   port: Number(tEnv.PORT) || 3000,

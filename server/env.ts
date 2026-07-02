@@ -18,6 +18,8 @@ const tEnv = {
   COOKIE_SECURE: env.COOKIE_SECURE === "true",
   POLL_INTERVAL_MS: Number(env.POLL_INTERVAL_MS ?? 10000),
   PRICING_TTL_MS: Number(env.PRICING_TTL_MS ?? 3600000),
+  // Skip the background collector (demo data / read-only replica).
+  DISABLE_COLLECTOR: env.DISABLE_COLLECTOR === "true",
 };
 
 export { tEnv };
