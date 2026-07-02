@@ -1,6 +1,7 @@
 import { useMemo, useState } from "react";
 import { cn } from "~/lib/cn";
 import { perHour, perMonth } from "~/lib/format";
+import { Skeleton } from "./Skeleton";
 
 export type ResourceRow = {
   id: number;
@@ -22,11 +23,13 @@ export function BreakdownTable({
   currency,
   vatMultiplier,
   projectName,
+  loading,
 }: {
   rows: ResourceRow[];
   currency: string;
   vatMultiplier: number;
   projectName?: (id: number) => string; // when set, shows a Project column
+  loading?: boolean;
 }) {
   const [sort, setSort] = useState<SortKey>("monthlyCost");
   const [dir, setDir] = useState<1 | -1>(-1);
@@ -101,6 +104,16 @@ export function BreakdownTable({
             </tr>
           </thead>
           <tbody>
+            {loading && rows.length === 0 &&
+              Array.from({ length: 6 }).map((_, i) => (
+                <tr key={`sk-${i}`} className="border-b border-[var(--border)]">
+                  {Array.from({ length: cols }).map((__, j) => (
+                    <td key={j} className="py-2.5 px-3">
+                      <Skeleton className={cn("h-4", j === 0 ? "w-40" : "w-16 ml-auto")} />
+                    </td>
+                  ))}
+                </tr>
+              ))}
             {sorted.map((r) => (
               <tr
                 key={`${r.id}-${r.category}`}
@@ -125,7 +138,7 @@ export function BreakdownTable({
                 </td>
               </tr>
             ))}
-            {sorted.length === 0 && (
+            {sorted.length === 0 && !(loading && rows.length === 0) && (
               <tr>
                 <td colSpan={cols} className="py-10 text-center text-[var(--muted)]">
                   {rows.length === 0 ? "No resources yet." : "No matches."}

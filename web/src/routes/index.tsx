@@ -8,6 +8,7 @@ import { BreakdownTable, type ResourceRow } from "~/components/BreakdownTable";
 import { CostChart } from "~/components/CostChart";
 import { KpiStrip } from "~/components/KpiStrip";
 import { Segmented } from "~/components/Segmented";
+import { Skeleton } from "~/components/Skeleton";
 import { perHour, perMonth, vatMultiplier } from "~/lib/format";
 
 export const Route = createFileRoute("/")({
@@ -78,7 +79,7 @@ function Explorer() {
 
   const series = (timeseries.data?.series ?? []) as any[];
   const hasSeries = series.some((s) => s.points?.length);
-  const noProjects = (projects.data?.projects ?? []).length === 0;
+  const noProjects = !projects.isLoading && (projects.data?.projects ?? []).length === 0;
 
   return (
     <AppShell>
@@ -99,7 +100,7 @@ function Explorer() {
             <select
               value={projectId}
               onChange={(e) => setProjectId(e.target.value)}
-              className="rounded-md border border-[var(--border)] bg-[var(--panel-2)] px-2.5 py-1.5 text-sm text-[var(--text)] outline-none"
+              className="w-full rounded-md border border-[var(--border)] bg-[var(--panel-2)] px-2.5 py-1.5 text-sm text-[var(--text)] outline-none sm:w-auto"
             >
               <option value="all">All projects</option>
               {(projects.data?.projects ?? []).map((p: any) => (
@@ -108,7 +109,7 @@ function Explorer() {
                 </option>
               ))}
             </select>
-            <div className="ml-auto flex flex-wrap items-center gap-3">
+            <div className="flex flex-wrap items-center gap-3 sm:ml-auto">
               <Segmented
                 value={range}
                 onChange={setRange}
@@ -129,7 +130,7 @@ function Explorer() {
             </div>
           </div>
 
-          <KpiStrip items={kpis} />
+          <KpiStrip items={kpis} loading={summary.isLoading} />
 
           {/* Time-series */}
           <div className="rounded-lg border border-[var(--border)] bg-[var(--panel)] p-4">
@@ -145,7 +146,9 @@ function Explorer() {
                 ]}
               />
             </div>
-            {hasSeries ? (
+            {timeseries.isLoading ? (
+              <Skeleton className="h-[300px] w-full" />
+            ) : hasSeries ? (
               <CostChart series={series} resolved={theme} vatMultiplier={mult} />
             ) : (
               <div className="flex h-[300px] items-center justify-center text-sm text-[var(--muted)]">
@@ -160,6 +163,7 @@ function Explorer() {
             currency={currency}
             vatMultiplier={mult}
             projectName={multiProject && !pid ? projectName : undefined}
+            loading={breakdown.isLoading}
           />
         </div>
       )}
