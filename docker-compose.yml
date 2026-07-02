@@ -1,0 +1,18 @@
+services:
+  hacm:
+    build: .
+    ports:
+      - "3000:3000"
+    environment:
+      # Required — encrypts stored Hetzner tokens. Generate: openssl rand -hex 32
+      APP_SECRET: ${APP_SECRET:?set APP_SECRET in .env}
+      # Optional overrides
+      POLL_INTERVAL_MS: ${POLL_INTERVAL_MS:-10000}
+      SNAPSHOT_INTERVAL_MS: ${SNAPSHOT_INTERVAL_MS:-300000}
+      COOKIE_SECURE: ${COOKIE_SECURE:-true}
+    volumes:
+      - hacm-data:/data
+    restart: unless-stopped
+
+volumes:
+  hacm-data:

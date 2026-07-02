@@ -1,0 +1,92 @@
+@import "tailwindcss";
+
+/* ── Ledger design tokens ───────────────────────────────────────────────
+   Light = paper, dark = graphite. Red (#e5484d) is the ONLY accent and also
+   means "cost up"; green means "cost down". Chart categories use --c1..--c7;
+   the accent is reserved for totals/emphasis so it stays meaningful. */
+:root {
+  color-scheme: light dark;
+  --bg: #fbfbfa;
+  --panel: #ffffff;
+  --panel-2: #f7f6f4;
+  --border: #e7e5e1;
+  --hover: #f1efec;
+  --text: #17191c;
+  --muted: #6b7280;
+  --faint: #9aa1ab;
+  --accent: #e5484d;
+  --accent-soft: rgba(229, 72, 77, 0.12);
+  --up: #e5484d;
+  --down: #2f9e63;
+  --grid: #eeede9;
+  --c1: #5b8def; --c2: #2f9e63; --c3: #e0a13a; --c4: #9b6dd6;
+  --c5: #34b3c0; --c6: #d9598a; --c7: #8a929e;
+}
+
+/* Dark palette — applied for OS-dark (unless user forced light) or explicit override. */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #0d0f12;
+    --panel: #15181d;
+    --panel-2: #101318;
+    --border: #23272e;
+    --hover: #1b1f26;
+    --text: #e6e9ef;
+    --muted: #8a919c;
+    --faint: #5a616b;
+    --accent: #ff4d54;
+    --accent-soft: rgba(255, 77, 84, 0.14);
+    --up: #ff5a60;
+    --down: #3fbf7f;
+    --grid: #20242b;
+    --c1: #6ea1ff; --c2: #43c483; --c3: #f0b45e; --c4: #b48be6;
+    --c5: #4fd0dd; --c6: #ef7aa6; --c7: #9aa2ae;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #0d0f12;
+  --panel: #15181d;
+  --panel-2: #101318;
+  --border: #23272e;
+  --hover: #1b1f26;
+  --text: #e6e9ef;
+  --muted: #8a919c;
+  --faint: #5a616b;
+  --accent: #ff4d54;
+  --accent-soft: rgba(255, 77, 84, 0.14);
+  --up: #ff5a60;
+  --down: #3fbf7f;
+  --grid: #20242b;
+  --c1: #6ea1ff; --c2: #43c483; --c3: #f0b45e; --c4: #b48be6;
+  --c5: #4fd0dd; --c6: #ef7aa6; --c7: #9aa2ae;
+}
+
+html,
+body,
+#root {
+  height: 100%;
+}
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  font-family: Inter, system-ui, -apple-system, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  font-size: 14px;
+}
+
+/* Ledger signatures */
+.num {
+  font-family: "JetBrains Mono", ui-monospace, SFMono-Regular, monospace;
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: "tnum";
+}
+.label {
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+::-webkit-scrollbar { width: 10px; height: 10px; }
+::-webkit-scrollbar-thumb { background: var(--border); border-radius: 5px; }

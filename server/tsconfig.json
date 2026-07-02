@@ -1,0 +1,22 @@
+{
+  "compilerOptions": {
+    "lib": ["ESNext"],
+    "module": "esnext",
+    "target": "esnext",
+    "moduleResolution": "bundler",
+    "moduleDetection": "force",
+    "allowImportingTsExtensions": true,
+    "noEmit": true,
+    "strict": true,
+    "skipLibCheck": true,
+    "allowSyntheticDefaultImports": true,
+    "forceConsistentCasingInFileNames": true,
+    "ignoreDeprecations": "6.0",
+    // baseUrl is load-bearing: lets us import bare specifiers ("methods/...", "env",
+    // "openapi_schemas/...") the same way the house repos do.
+    "baseUrl": ".",
+    "paths": { "~/*": ["./methods/*"] },
+    "types": ["bun-types"]
+  },
+  "exclude": ["node_modules"]
+}
