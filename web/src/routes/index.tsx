@@ -1,8 +1,8 @@
 import { createFileRoute, Link, redirect } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { useMemo, useState } from "react";
-import { authStatusOptions, costsSummaryOptions, projectsListOptions } from "~/api";
-import { breakdownOpts, timeseriesOpts } from "~/api/costs";
+import { authStatusOptions, projectsListOptions } from "~/api";
+import { breakdownOpts, summaryOpts, timeseriesOpts } from "~/api/costs";
 import { AppShell } from "~/components/AppShell";
 import { BreakdownTable, type ResourceRow } from "~/components/BreakdownTable";
 import { CostChart } from "~/components/CostChart";
@@ -26,10 +26,11 @@ function Explorer() {
   const [range, setRange] = useState<keyof typeof RANGES>("7d");
   const [gross, setGross] = useState(false);
 
+  const pid = projectId !== "all" ? projectId : undefined;
   const projects = useQuery(projectsListOptions());
-  const summary = useQuery({ ...costsSummaryOptions(), refetchInterval: 10_000 });
+  const summary = useQuery({ ...summaryOpts(pid ? { projectId: pid } : undefined), refetchInterval: 10_000 });
   const breakdown = useQuery({
-    ...breakdownOpts(projectId !== "all" ? { projectId } : undefined),
+    ...breakdownOpts(pid ? { projectId: pid } : undefined),
     refetchInterval: 10_000,
   });
 
@@ -37,7 +38,20 @@ function Explorer() {
     const now = Date.now();
     return { from: String(now - RANGES[range]), to: String(now) };
   }, [range]);
-  const timeseries = useQuery({ ...timeseriesOpts({ groupBy, from, to }), refetchInterval: 30_000 });
+  const timeseries = useQuery({
+    ...timeseriesOpts({ groupBy, from, to, projectId: pid }),
+    refetchInterval: 30_000,
+  });
+
+  // projectId -> name (for the breakdown table's Project column).
+  const projectName = useMemo(() => {
+    const m = new Map<number, string>();
+    for (const p of projects.data?.projects ?? []) {
+      if (p.id != null) m.set(p.id, p.name ?? `project ${p.id}`);
+    }
+    return (id: number) => m.get(id) ?? `project ${id}`;
+  }, [projects.data]);
+  const multiProject = (projects.data?.projects ?? []).length > 1;
 
   const currency = summary.data?.currency ?? "EUR";
   const vatRate = summary.data?.vatRate ?? 0;
@@ -145,6 +159,7 @@ function Explorer() {
             rows={(breakdown.data?.resources ?? []) as ResourceRow[]}
             currency={currency}
             vatMultiplier={mult}
+            projectName={multiProject && !pid ? projectName : undefined}
           />
         </div>
       )}

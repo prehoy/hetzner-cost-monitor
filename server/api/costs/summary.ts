@@ -1,5 +1,5 @@
 import { createRoute } from "@hono/zod-openapi";
-import { eq, gte, isNull, sql } from "drizzle-orm";
+import { and, eq, gte, isNull, sql } from "drizzle-orm";
 import type { Context } from "hono";
 import db from "../../db/client";
 import { billingHours, projects, resources } from "../../db/schema";
@@ -8,8 +8,16 @@ import { pricingMeta } from "../../methods/costs/meta";
 import routeHandler from "../../methods/routeHandler";
 
 // Current burn (live inventory) + month-to-date accrued (billing ledger). All NET.
+// Optional ?projectId scopes every figure to one project.
 async function summary(c: Context) {
   if (!(await requireAuth(c))) return c.json({ error: "Unauthorized" }, 401);
+  const projectId = c.req.query("projectId");
+  const pid = projectId ? Number(projectId) : undefined;
+
+  const liveWhere = pid
+    ? and(isNull(resources.deletedAt), eq(resources.projectId, pid))
+    : isNull(resources.deletedAt);
+
   const rows = await db
     .select({
       projectId: resources.projectId,
@@ -20,7 +28,7 @@ async function summary(c: Context) {
     })
     .from(resources)
     .leftJoin(projects, eq(projects.id, resources.projectId))
-    .where(isNull(resources.deletedAt))
+    .where(liveWhere)
     .groupBy(resources.projectId, projects.name);
 
   const totalHourly = rows.reduce((s, r) => s + r.hourly, 0);
@@ -30,10 +38,13 @@ async function summary(c: Context) {
   // ephemeral/burst servers — each counts as a full billed hour.
   const now = new Date();
   const monthStart = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), 1));
+  const mtdWhere = pid
+    ? and(gte(billingHours.hourStart, monthStart), eq(billingHours.projectId, pid))
+    : gte(billingHours.hourStart, monthStart);
   const [mtd] = await db
     .select({ total: sql<number>`coalesce(sum(${billingHours.hourlyCost}), 0)` })
     .from(billingHours)
-    .where(gte(billingHours.hourStart, monthStart));
+    .where(mtdWhere);
 
   const meta = await pricingMeta();
   return c.json({ ...meta, totalHourly, totalMonthly, mtdAccrued: mtd.total, perProject: rows });
