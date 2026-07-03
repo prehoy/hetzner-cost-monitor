@@ -7,6 +7,13 @@ API every 10 seconds, prices every live resource against the official
 you get accurate current burn **and** historical spend, broken down by project,
 resource type, and location.
 
+> ### ☁️ Don't want to self-host? → [**HCM Cloud**](https://usehcm.com)
+> The hosted version: zero setup, multi-project, and it adds what this repo
+> doesn't — a **savings finder** (flags idle/unattached resources with the exact
+> €/mo to cut), **uptime monitoring** with down/recovery alerts, **spend alerts**,
+> **teams**, and a **mobile app**. **Free tier forever**; Pro is $9/user/mo.
+> **→ [usehcm.com](https://usehcm.com)** · [Try the free Hetzner cost calculator](https://usehcm.com/calculator)
+
 - **Live burn** — €/hour and projected €/month across every project.
 - **Month-to-date** — actual accrued spend, correct for autoscaling: Hetzner
   bills a full hour the instant a server exists, so a burst node that lives two
