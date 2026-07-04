@@ -11,7 +11,7 @@ resource type, and location.
 > The hosted version: zero setup, multi-project, and it adds what this repo
 > doesn't — a **savings finder** (flags idle/unattached resources with the exact
 > €/mo to cut), **uptime monitoring** with down/recovery alerts, **spend alerts**,
-> **teams**, and a **mobile app**. **Free tier forever**; Pro is $9/user/mo.
+> and **teams** (mobile apps coming soon). **Free tier forever**; Pro is $9/user/mo.
 > **→ [usehcm.com](https://usehcm.com)** · [Try the free Hetzner cost calculator](https://usehcm.com/calculator)
 
 - **Live burn** — €/hour and projected €/month across every project.
