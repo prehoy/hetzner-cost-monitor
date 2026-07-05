@@ -124,6 +124,21 @@ export const pricingSnapshots = sqliteTable("pricing_snapshots", {
   dataJson: text("data_json").notNull(),
 });
 
+// Spend alert — a single global rule (OSS-limited). Evaluated on an interval; when
+// projected monthly burn crosses the threshold we POST once to the webhook,
+// debounced by `triggered` (re-arms when burn drops back below). HCM Cloud adds
+// per-project + multi-metric alerts and email delivery.
+export const alertConfig = sqliteTable("alert_config", {
+  id: integer("id").primaryKey({ autoIncrement: true }),
+  webhookUrl: text("webhook_url").notNull(),
+  threshold: real("threshold").notNull(), // NET €/mo projected
+  enabled: integer("enabled", { mode: "boolean" }).notNull().default(true),
+  triggered: integer("triggered", { mode: "boolean" }).notNull().default(false), // currently in breach
+  lastValue: real("last_value"), // projected burn at last evaluation
+  lastNotifiedAt: integer("last_notified_at", { mode: "timestamp_ms" }),
+  updatedAt: integer("updated_at", { mode: "timestamp_ms" }).notNull().$defaultFn(now),
+});
+
 export const schema = {
   users,
   sessions,
@@ -133,4 +148,5 @@ export const schema = {
   priceOverrides,
   backupConfig,
   pricingSnapshots,
+  alertConfig,
 };

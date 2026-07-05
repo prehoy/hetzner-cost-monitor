@@ -1,50 +1,24 @@
-import { createRoute } from "@hono/zod-openapi";
+import { defineRoute, z } from "@prehoy/baguette";
 import { eq } from "drizzle-orm";
-import type { Context } from "hono";
 import db from "../../db/client";
 import { projects } from "../../db/schema";
-import { requireAuth } from "../../methods/auth/session";
-import routeHandler from "../../methods/routeHandler";
 
-async function toggle(c: Context) {
-  if (!(await requireAuth(c))) return c.json({ error: "Unauthorized" }, 401);
-  const body = (await c.req.json()) as { id?: number; active?: boolean };
-  if (!body.id || typeof body.active !== "boolean") {
-    return c.json({ error: "Missing id or active" }, 400);
-  }
-  await db.update(projects).set({ active: body.active }).where(eq(projects.id, body.id));
-  return c.json({ status: "success" });
-}
-
-const handler = (c: Context) => routeHandler({ name: "projects_toggle", handler: toggle, c });
-export default handler;
-
-export const route = createRoute({
+export default defineRoute({
   method: "post",
   tags: ["Projects"],
-  path: "/api/projects/toggle",
-  operationId: "projectsToggle",
+  auth: true,
   request: {
-    body: {
-      content: {
-        "application/json": {
-          schema: {
-            type: "object",
-            properties: { id: { type: "number" }, active: { type: "boolean" } },
-            required: ["id", "active"],
-          },
-        },
-      },
-    },
+    body: z.object({
+      id: z.number().optional(),
+      active: z.boolean().optional(),
+    }),
   },
-  responses: {
-    200: {
-      description: "Toggled",
-      content: {
-        "application/json": {
-          schema: { type: "object", properties: { status: { type: "string" } } },
-        },
-      },
-    },
+  response: z.any(),
+  handler: async (c, { body }) => {
+    if (!body.id || typeof body.active !== "boolean") {
+      return c.json({ error: "Missing id or active" }, 400);
+    }
+    await db.update(projects).set({ active: body.active }).where(eq(projects.id, body.id));
+    return c.json({ status: "success" });
   },
 });

@@ -8,10 +8,12 @@ you get accurate current burn **and** historical spend, broken down by project,
 resource type, and location.
 
 > ### ☁️ Don't want to self-host? → [**HCM Cloud**](https://usehcm.com)
-> The hosted version: zero setup, multi-project, and it adds what this repo
-> doesn't — a **savings finder** (flags idle/unattached resources with the exact
-> €/mo to cut), **uptime monitoring** with down/recovery alerts, **spend alerts**,
-> and **teams** (mobile apps coming soon). **Free tier forever**; Pro is $9/user/mo.
+> This repo is the open-core edition. The hosted version adds what self-hosting
+> doesn't: **metric-based idle detection** (idle-server savings from sampled CPU,
+> on top of the rule-based finder here), **uptime monitoring** with down/recovery
+> alerts, **richer alerting** (per-project, multi-metric, email), **teams**, plus
+> zero setup and a mobile app (coming soon). **Free tier forever**; Pro is
+> $9/user/mo.
 > **→ [usehcm.com](https://usehcm.com)** · [Try the free Hetzner cost calculator](https://usehcm.com/calculator)
 
 - **Live burn** — €/hour and projected €/month across every project.
@@ -27,6 +29,12 @@ resource type, and location.
 - **Price overrides** — `/v1/pricing` only exposes *current* list prices, so servers on
   grandfathered/legacy rates (e.g. pre-June-2026 CCX) get overcharged. Pin the real per-type
   price on the Pricing page and the collector uses it instead of the rate card.
+- **Savings finder** — flags reclaimable spend with the exact €/mo to cut: unattached
+  volumes, unassigned IPs, powered-off-but-billed servers, empty load balancers, stale
+  snapshots. Advisory only — read-only token, never touches your infra.
+- **Spend alerts** — set a projected-€/mo threshold and get a webhook (Slack / Discord /
+  Mattermost / any endpoint) when your burn crosses it. Debounced: fires once, re-arms when
+  you drop back under.
 
 Covers Hetzner **Cloud**: servers (incl. backups & traffic overage), volumes,
 load balancers, primary & floating IPs, and snapshots. Costs are computed
@@ -47,13 +55,15 @@ estimates (`live inventory × /v1/pricing`), not scraped invoices.
 
 ## Stack
 
-Bun · Hono (folder-based routing, OpenAPI) · SQLite + Drizzle · TanStack React
-(Router + Query) with a generated hey-api client. Design: **Ledger** — monospace
-tabular figures, hairline-ruled panels, one accent, light/dark following the OS.
+Bun · [baguette](https://www.npmjs.com/package/@prehoy/baguette) (folder-based
+routing over Hono, one-declaration routes + OpenAPI) · SQLite + Drizzle · TanStack
+React (Router + Query) with a generated hey-api client. Design: **Ledger** —
+monospace tabular figures, hairline-ruled panels, one accent, light/dark following
+the OS.
 
 ```
-server/   Bun + Hono API + 10s collector          (SQLite, Drizzle)
-web/      Vite + TanStack React cost explorer      (generated OpenAPI client)
+server/   Bun + baguette API + 10s collector       (SQLite, Drizzle)
+web/      Vite + TanStack React cost explorer       (generated OpenAPI client)
 ```
 
 ## Quick start (development)
@@ -112,7 +122,7 @@ with your own network controls (VPN / IP allowlist / SSO proxy) as appropriate.
 cd web && bun install && bun run build
 cd ../server && bun install
 cp -r ../web/dist ./public       # server auto-serves ./public when present
-APP_SECRET=... COOKIE_SECURE=true bun index.ts
+APP_SECRET=... COOKIE_SECURE=true bun server.ts
 ```
 
 ## Configuration
@@ -127,6 +137,7 @@ Server env (all optional except `APP_SECRET`):
 | `COOKIE_SECURE` | `false` | Set `true` behind HTTPS. |
 | `POLL_INTERVAL_MS` | `10000` | How often infra state is polled. |
 | `PRICING_TTL_MS` | `3600000` | How often the `/v1/pricing` rate card is refreshed. |
+| `ALERT_INTERVAL_MS` | `300000` | How often the spend-alert threshold is evaluated. |
 
 ## How cost is computed
 

@@ -34,6 +34,8 @@ export function AppShell({ children }: { children: (theme: "light" | "dark") => 
       <NavLink to="/" label="Explorer" />
       <NavLink to="/pricing" label="Pricing" />
       <NavLink to="/projects" label="Projects" />
+      <NavLink to="/savings" label="Savings" />
+      <NavLink to="/alerts" label="Alerts" />
       <NavLink to="/backup" label="Backup" />
     </>
   );

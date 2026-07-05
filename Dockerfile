@@ -23,4 +23,4 @@ VOLUME /data
 EXPOSE 3000
 
 # APP_SECRET must be supplied at runtime (see README).
-CMD ["bun", "index.ts"]
+CMD ["bun", "server.ts"]
