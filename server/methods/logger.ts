@@ -1,7 +1,7 @@
 import { tEnv } from "../env";
 import processError from "./processError";
 
-// Structured JSON logger to stdout (same shape as the house repos).
+// Structured JSON logger to stdout.
 const transport = (level: string, message: string | object) => {
   try {
     const messageObject =

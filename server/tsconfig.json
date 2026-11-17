@@ -13,7 +13,7 @@
     "forceConsistentCasingInFileNames": true,
     "ignoreDeprecations": "5.0",
     // baseUrl is load-bearing: lets us import bare specifiers ("methods/...", "env",
-    // "openapi_schemas/...") the same way the house repos do.
+    // "openapi_schemas/...").
     "baseUrl": ".",
     "paths": { "~/*": ["./methods/*"] },
     "types": ["bun-types"]
